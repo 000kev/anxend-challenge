@@ -1,29 +1,56 @@
-// import obj from "../../dbschema/edgeql-js/index"
-import { useLoaderData } from "@remix-run/react";
-import { json } from "@remix-run/react";
-import { client } from "../utils/db.server";
+// import { useLoaderData } from "@remix-run/react";
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { useActionData, Form } from "@remix-run/react";
+import { client, db } from "../utils/db.server";
+import e from "../../dbschema/edgeql-js";
+import { redirect } from "@remix-run/node";
 
-export const loader = async () => {
-    const result = await client.query(`select 2 + 2;`)
-    let message = "The result is " + result + "\nThe db query was succesful.";
-    return message;
+
+
+// export const loader = async () => {
+//     // const result = await client.query(`select 2 + 2;`)
+//     // let message = "The result is " + result + "\nThe db query was succesful.";
+//     // return message;
+//     const query = e.insert(e.School, {
+//         name: "Marian College"
+//     });
+//     const result = await query.run(client);
+//     return "Successful add";
+// }
+export const action = async ({request}: ActionFunctionArgs) => {
+    const formData = await request.formData();
+    const name = formData.get("name");
+    const description = formData.get("description");
+    // e.insert(e.School, {
+    //     name: "St. Martins"
+    // }).run(client);
+
+    return {name: name, description: description};
 }
 
 export default function ProjectOne() {
-    const lx = useLoaderData<typeof loader>();
-
-    const goToServer = () => {
-        console.log(lx);
-    }
+    const data = useActionData<typeof action>();
+    console.log(data);
 
     return (
-        <>
-            <h1>Hello World!!!</h1>
-            <button
-                className="mt-8 inline-block rounded-full bg-anxpurple-700 px-16 py-4 font-montserrat text-white hover:bg-anxwhite-300 hover:text-anxgreen-300 hover:shadow-xl"
-                onClick={goToServer}
-            >
-                Add to DB</button>
-        </>
+        <Form className="flex-col" method="post" action="/project_one">
+        <p>
+          <label>
+            School:
+            <br />
+            <input name="name" type="text"/>
+          </label>
+        </p>
+        <p>
+          <label>
+            Address:
+            <br />
+            <textarea name="description" />
+          </label>
+        </p>
+        <p>
+          <button type="submit">Create</button>
+        </p>
+      </Form>
     );
 }
