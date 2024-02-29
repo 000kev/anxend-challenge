@@ -26,7 +26,6 @@ export default function App() {
       <body className="bg-anxpurple-300">
         <Outlet />
         <Scripts />
-  
         <ScrollRestoration />
       </body>
     </html>

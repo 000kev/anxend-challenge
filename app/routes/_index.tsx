@@ -1,45 +1,164 @@
-import { Link } from "@remix-run/react"
-import logo from "../images/Anxend Logo.svg"
-import bee from "../images/Buzzbee_Headset_and_Clipboard 1.png"
+// import { useLoaderData } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useActionData, useLoaderData, useFetcher, Form } from "@remix-run/react";
+import { client, db } from "../utils/db.server";
+import e from "../../dbschema/edgeql-js";
+import { exists } from "edgedb/dist/adapter.node";
 
-import type { MetaFunction } from "@remix-run/node"
 
-export const meta: MetaFunction = () => [{ title: "Interview Project" }]
+const filterHandler = (e) => {
+    console.log(e.target.value);
+    // return e.target.value;
+}
 
-export default function Index() {
-  return (
-    <div className="min-h-screen bg-anxpurple-300 py-6">
-      <div className="container">
-        <img className="h-5 w-auto" src={logo} alt="Anxend logo" />
-      </div>
+export const loader = async () => {
+    // get the input filter from the component from formData
 
-      <div className="flex lg:h-screen lg:items-center">
-        <div className="container flex flex-col lg:flex-row">
-          <div>
-            <h1 className="mt-10 font-montserrat text-5xl text-white drop-shadow-xl">
-              Welcome to the Anxend Software Engineer Interview
-            </h1>
-            <p className="mt-8 font-montserrat text-xl text-white">
-              Pick a project to take part.
-            </p>
-            <Link
-              className="mt-8 inline-block rounded-full bg-anxpurple-700 px-16 py-4 font-montserrat text-white hover:bg-anxwhite-300 hover:text-anxgreen-300 hover:shadow-xl"
-              to="/project_one"
-              // This button goes nowhere, please look at the readme in the repo 🙂
-            >
-              Read the Readme
-            </Link>
-            <p className="mt-8 font-montserrat text-xl text-white ">
-              Best of luck and thanks for taking part.
-            </p>
-          </div>
-          <div className="h-1/3">
-            <div className="h-1/3">
-              <img className="lg:-mt-28 lg:block" src={bee} alt="Anxend logo" />
+    const query = e.select(e.School, school => ({
+        id: true,
+        name: true,
+        address: addr => ({
+            townOrCity: true,
+            filter: e.op(addr.townOrCity, 'like', 'Nelspruit')
+        }),
+        filter: e.op('exists', e.set(school.address))
+    }));
+    const result = await query.run(client);
+    return result;
+}
+export const action = async ({ request }: ActionFunctionArgs) => {
+    const formData = await request.formData();
+
+    const name = formData.get("name").toString();
+    const isSenior = formData.get("juniorSenior").toString() === "senior";
+    const country = formData.get("country").toString();
+    const address_code = formData.get("addressCode").toString();
+    const town_city = formData.get("townCity").toString();
+    const name_number = formData.get("nameNumber").toString();
+    const region = formData.get("region").toString();
+    const street1 = formData.get("street1").toString();
+    const street2 = formData.get("street2").toString();
+
+    let entry = {
+        name: name,
+        juniorSchool: false,
+        seniorSchool: true,
+        country: country,
+        addressCode: address_code,
+        townOrCity: town_city,
+        nameOrNumber: name_number,
+        region: region,
+        street: street1,
+        street2: street2
+    }
+
+    const entryQuery = e.insert(e.Address, {
+        addressCode: address_code,
+        country: country,
+        nameOrNumber: name_number,
+        townOrCity: town_city,
+        region: region,
+        street: street1,
+        street2: street2,
+        organisation: e.insert(e.School, {
+            name: name,
+            seniorSchool: isSenior,
+            juniorSchool: !isSenior
+        })
+    });
+    entryQuery.run(client);
+
+    return entry;
+}
+
+export default function ProjectOne() {
+    const action_data = useActionData<typeof action>();
+    const loader_data = useLoaderData<typeof loader>();
+    const fetcher = useFetcher({key: "inputFilter"});
+
+    console.log(loader_data);
+
+    return (<>
+        <fetcher.Form className="flex-col" method="post" action="/_index">
+            <span>
+                <label>
+                    School:
+                    <br />
+                    <input name="name" type="text" />
+                </label>
+                <select name="juniorSenior">
+                    <option value="senior">Senior School</option>
+                    <option value="junior">Junior School</option>
+                </select>
+            </span>
+            <div>
+                <select name="country">
+                    <option>South Africa</option>
+                    <option>England</option>
+                    <option>Germany</option>
+                    <option>France</option>
+                    <option>Brazil</option>
+                    <option>USA</option>
+                </select>
             </div>
-          </div>
+            <div>
+                <label>
+                    Address Code:
+                    <br />
+                    <input name="addressCode" type="text" />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Town/City:
+                    <br />
+                    <input name="townCity" type="text" />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Region:
+                    <br />
+                    <input name="region" type="text" />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Street1
+                    <br />
+                    <input name="street1" type="text" />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Street2:
+                    <br />
+                    <input name="street2" type="text" />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Street Name/Number
+                    <br />
+                    <input name="nameNumber" type="text" />
+                </label>
+            </div>
+            <div>
+                <button type="submit">Create</button>
+            </div>
+        </fetcher.Form>
+        <br />
+        <div>
+            <h2>Display Schools</h2>
+            <label>
+                Filter Schools by Town/City:
+                <br />
+                <input name="filter" type="text" onInput={(e) => filterHandler(e)}/>
+            </label>
+            {loader_data.map(school => (
+                <div key={school.id}>{school.name}</div>
+            ))}
         </div>
-      </div>
-    </div>
-  )
+    </>);
 }
