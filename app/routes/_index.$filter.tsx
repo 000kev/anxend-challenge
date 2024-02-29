@@ -18,7 +18,7 @@ export const loader = async ({
         name: true,
         address: addr => ({
             townOrCity: true,
-            filter: e.op(addr.townOrCity, 'like', 'Nelspruit')
+            filter: e.op(addr.townOrCity, 'like', params.filter)
         }),
         filter: e.op('exists', e.set(school.address))
     }));
