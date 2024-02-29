@@ -1,20 +1,18 @@
 // import { useLoaderData } from "@remix-run/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useFetcher, Form } from "@remix-run/react";
 import { client, db } from "../utils/db.server";
 import e from "../../dbschema/edgeql-js";
 import { exists } from "edgedb/dist/adapter.node";
 
 
-const filterHandler = (e) => {
-    console.log(e.target.value);
-    // return e.target.value;
-}
-
-export const loader = async () => {
+export const loader = async ({
+    params
+}: LoaderFunctionArgs) => {
     // get the input filter from the component from formData
-
+    console.log("loader", params.filter);
+    
     const query = e.select(e.School, school => ({
         id: true,
         name: true,
@@ -29,58 +27,58 @@ export const loader = async () => {
 }
 export const action = async ({ request }: ActionFunctionArgs) => {
     const formData = await request.formData();
+    const isSenior: boolean = formData.get("juniorSenior")?.toString() === "senior";
+    const name: string = formData.get("name")?.toString() ?? "";
+    const country: string = formData.get("country")?.toString() ?? "";
+    const address_code: string = formData.get("addressCode")?.toString() ?? "";
+    const town_city: string = formData.get("townCity")?.toString() ?? "";
+    const name_number: string = formData.get("nameNumber")?.toString() ?? "";
+    const region: string = formData.get("region")?.toString() ?? "";
+    const street1: string = formData.get("street1")?.toString() ?? "";
+    const street2: string = formData.get("street2")?.toString() ?? "";
 
-    const name = formData.get("name").toString();
-    const isSenior = formData.get("juniorSenior").toString() === "senior";
-    const country = formData.get("country").toString();
-    const address_code = formData.get("addressCode").toString();
-    const town_city = formData.get("townCity").toString();
-    const name_number = formData.get("nameNumber").toString();
-    const region = formData.get("region").toString();
-    const street1 = formData.get("street1").toString();
-    const street2 = formData.get("street2").toString();
+    const minimumRequiremets: boolean = (
+        name !== "" && 
+        address_code !== "" && 
+        country !== "" && 
+        name_number !== "" && 
+        town_city !== ""
+    )
+    if (minimumRequiremets) {
+        e.insert(e.Address, {
+            addressCode: address_code,
+            country: country,
+            nameOrNumber: name_number,
+            townOrCity: town_city,
+            region: region,
+            street: street1,
+            street2: street2,
+            organisation: e.insert(e.School, {
+                name: name,
+                seniorSchool: isSenior,
+                juniorSchool: !isSenior
+            })
+        }).run(client); 
+    } else console.log("Invalid DB entry")
 
-    let entry = {
-        name: name,
-        juniorSchool: false,
-        seniorSchool: true,
-        country: country,
-        addressCode: address_code,
-        townOrCity: town_city,
-        nameOrNumber: name_number,
-        region: region,
-        street: street1,
-        street2: street2
-    }
+    const filter: string = formData.get("filter") === null || undefined 
+    ? "home" 
+    : formData.get("filter").toString() === "" 
+    ? "home" 
+    : formData.get("filter").toString();
+    
 
-    const entryQuery = e.insert(e.Address, {
-        addressCode: address_code,
-        country: country,
-        nameOrNumber: name_number,
-        townOrCity: town_city,
-        region: region,
-        street: street1,
-        street2: street2,
-        organisation: e.insert(e.School, {
-            name: name,
-            seniorSchool: isSenior,
-            juniorSchool: !isSenior
-        })
-    });
-    entryQuery.run(client);
-
-    return entry;
+    return redirect(`/${filter}`);
 }
 
 export default function ProjectOne() {
-    const action_data = useActionData<typeof action>();
+    // const action_data = useActionData<typeof action>();
     const loader_data = useLoaderData<typeof loader>();
-    const fetcher = useFetcher({key: "inputFilter"});
 
     console.log(loader_data);
 
     return (<>
-        <fetcher.Form className="flex-col" method="post" action="/_index">
+        <form className="flex-col" method="post" action="/home">
             <span>
                 <label>
                     School:
@@ -147,15 +145,18 @@ export default function ProjectOne() {
             <div>
                 <button type="submit">Create</button>
             </div>
-        </fetcher.Form>
+        </form>
         <br />
         <div>
             <h2>Display Schools</h2>
-            <label>
-                Filter Schools by Town/City:
-                <br />
-                <input name="filter" type="text" onInput={(e) => filterHandler(e)}/>
-            </label>
+            <form className="flex-col" method="post" action="/home">
+                <label>
+                    Filter Schools by Town/City:
+                    <br />
+                    <input name="filter" type="text"/>
+                </label>
+                <button type="submit">Filter</button>
+            </form>
             {loader_data.map(school => (
                 <div key={school.id}>{school.name}</div>
             ))}
