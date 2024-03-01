@@ -101,15 +101,15 @@ export default function ProjectOne() {
                     <br />
                     <input name="name" type="text" />
                 </label>
-                <select name="juniorSenior">
-                <option value="none" selected disabled hidden>Select School Level</option>
+                <select defaultValue="none" name="juniorSenior">
+                    <option value="none">Select School Level</option>
                     <option value="senior">Senior School</option>
                     <option value="junior">Junior School</option>
                 </select>
             </span>
             <div>
-                <select name="country">
-                    <option value="none" selected disabled hidden>Select a Country</option>
+                <select defaultValue="none" name="country">
+                    <option value="none" disabled hidden>Select a Country</option>
                     <option value="South Africa">South Africa</option>
                     <option value="England">England</option>
                     <option value="Germany">Germany</option>
@@ -173,8 +173,8 @@ export default function ProjectOne() {
                     Filter Schools by Town/City:
                     <br />
                 </label>
-                <select name="filter">
-                    <option value="none" selected disabled hidden>Select a City/Town</option>
+                <select defaultValue="none" name="filter">
+                    <option value="none" disabled hidden>Select a City/Town</option>
                     {
                     getFilters(loader_data.result1.map(el => el.address[0].townOrCity)).map(town => (
                         <option key={town}>{town}</option>
