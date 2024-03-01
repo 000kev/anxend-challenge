@@ -1,4 +1,4 @@
-import { Form, useNavigation, useActionData } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 
 export default function DisplaySchools(props) {
     const loader_data = props.loaderData;
@@ -9,14 +9,14 @@ export default function DisplaySchools(props) {
     }
 
     return (
-        <div className={props.className}>
-            <h1 className="font-montserrat text-5xl text-white drop-shadow-xl">Schools Near You</h1>
+        <section className={props.className}>
+            <h1 className="font-montserrat text-4xl text-white drop-shadow-xl">Schools Near You</h1>
             <Form className="flex flex-col" method="post" action="/home">
-                <label className="mt-8 font-montserrat text-xl text-white">
+                <label className="mt-4 font-montserrat text-base text-white">
                     Filter Schools by City or Town:
                 </label>
                 <span>
-                    <select className="w-64 mt-4 font-montserrat text-xl text-black" defaultValue="" name="filter">
+                    <select className="w-64 mt-4 font-montserrat text-base text-black" defaultValue="" name="filter">
                         <option value="" disabled hidden>Select a City/Town</option>
                         {
                         getFilters(loader_data.result1.map(el => el.address[0].townOrCity)).map(town => (
@@ -28,8 +28,8 @@ export default function DisplaySchools(props) {
                 </span>
             </Form>
             {loader_data.result2.map(school => (
-                <div className="mt-2 font-montserrat text-xl text-white " key={school.id}>{school.name}</div>
+                <div className="mt-2 font-montserrat text-base text-white " key={school.id}>{school.name}</div>
             ))}
-        </div>
+        </section>
     );
 }
