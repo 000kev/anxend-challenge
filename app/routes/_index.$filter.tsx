@@ -1,19 +1,26 @@
 // import { useLoaderData } from "@remix-run/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { useActionData, useLoaderData, useFetcher, Form } from "@remix-run/react";
-import { client, db } from "../utils/db.server";
+import { redirect } from "@remix-run/node";
+import { useActionData, useLoaderData, Form } from "@remix-run/react";
+import { client } from "../utils/db.server";
 import e from "../../dbschema/edgeql-js";
-import { exists } from "edgedb/dist/adapter.node";
 
 
 export const loader = async ({
     params
 }: LoaderFunctionArgs) => {
     // get the input filter from the component from formData
-    console.log("loader", params.filter);
+    // console.log("loader", params.filter);
+
+    const q1 = e.select(e.School, school => ({
+        id: true,
+        name: true,
+        address: addr => ({
+            townOrCity: true
+        })
+    }));
     
-    const query = e.select(e.School, school => ({
+    const q2 = e.select(e.School, school => ({
         id: true,
         name: true,
         address: addr => ({
@@ -22,8 +29,11 @@ export const loader = async ({
         }),
         filter: e.op('exists', e.set(school.address))
     }));
-    const result = await query.run(client);
-    return result;
+    
+    const result1 = await q1.run(client);
+    const result2 = await q2.run(client);
+    // console.log(result1[0].address[0].townOrCity);
+    return {result1, result2};
 }
 export const action = async ({ request }: ActionFunctionArgs) => {
     const formData = await request.formData();
@@ -66,16 +76,22 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     : formData.get("filter").toString() === "" 
     ? "home" 
     : formData.get("filter").toString();
+
+    // const filter2: string = formData.get("filter_select").toString();
+    console.log("filter", filter);
     
 
     return redirect(`/${filter}`);
 }
-
+const getFilters = (arr) => {
+    const result = arr.filter((item, index) => arr.indexOf(item) === index);
+    return result;
+}
 export default function ProjectOne() {
     // const action_data = useActionData<typeof action>();
     const loader_data = useLoaderData<typeof loader>();
 
-    console.log(loader_data);
+    // console.log(loader_data);
 
     return (<>
         <form className="flex-col" method="post" action="/home">
@@ -86,18 +102,21 @@ export default function ProjectOne() {
                     <input name="name" type="text" />
                 </label>
                 <select name="juniorSenior">
+                <option value="none" selected disabled hidden>Select School Level</option>
                     <option value="senior">Senior School</option>
                     <option value="junior">Junior School</option>
                 </select>
             </span>
             <div>
                 <select name="country">
-                    <option>South Africa</option>
-                    <option>England</option>
-                    <option>Germany</option>
-                    <option>France</option>
-                    <option>Brazil</option>
-                    <option>USA</option>
+                    <option value="none" selected disabled hidden>Select a Country</option>
+                    <option value="South Africa">South Africa</option>
+                    <option value="England">England</option>
+                    <option value="Germany">Germany</option>
+                    <option value="France">France</option>
+                    <option value="Brazil">Brazil</option>
+                    <option value="USA">USA</option>
+                    <option value="Other">Other</option>
                 </select>
             </div>
             <div>
@@ -153,11 +172,18 @@ export default function ProjectOne() {
                 <label>
                     Filter Schools by Town/City:
                     <br />
-                    <input name="filter" type="text"/>
                 </label>
+                <select name="filter">
+                    <option value="none" selected disabled hidden>Select a City/Town</option>
+                    {
+                    getFilters(loader_data.result1.map(el => el.address[0].townOrCity)).map(town => (
+                        <option key={town}>{town}</option>
+                    ))
+                    }
+                </select>
                 <button type="submit">Filter</button>
             </form>
-            {loader_data.map(school => (
+            {loader_data.result2.map(school => (
                 <div key={school.id}>{school.name}</div>
             ))}
         </div>
