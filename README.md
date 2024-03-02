@@ -16,11 +16,14 @@ the manual router configurations working but it seems I need more time to get it
 
 ### Examples
 
-Here we have an example of a database populated with some data using the app and the app itself
-<br/>
+Here we have a database populated with some data using the app and the app itself. In the database we have 3 entries in London city, so if you pick London as a filter, the
+3 schools in that City will be displayed on the right hand side. This use case demonstrates how the filter option works and that it uses the entries from the database
+to populate the dropdown. Test it out!
+
 <span> 
   <img width="360" alt="db" src="https://github.com/000kev/anxend-challenge/assets/26770945/c4a73451-8079-4331-88e3-d77cf9961042">
   <img width="360" alt="start" src="https://github.com/000kev/anxend-challenge/assets/26770945/6dfeaaa1-e220-4273-9367-643c138e6bdd">
+  <img width="360" alt="filter" src="https://github.com/000kev/anxend-challenge/assets/26770945/67b312f7-36a6-4051-aad7-dc970bdc1fe5">
 </span>
 
 
