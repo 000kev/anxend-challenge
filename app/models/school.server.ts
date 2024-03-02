@@ -61,7 +61,7 @@ const serveAction = async (data) => {
                 juniorSchool: !isSenior
             })
         }).run(client);
-    } else console.log('Entry invalid! Data not pushed to database');
+    } 
 
     const filter: string = data.get("filter") === null || undefined
         ? "home"
