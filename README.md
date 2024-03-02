@@ -17,10 +17,10 @@ the manual router configurations working but it seems I need more time to get it
 ### Examples
 
 Here we have an example of a database populated with some data using the app and the app itself
-<span>
-  ![db1](https://github.com/000kev/anxend-challenge/assets/26770945/6e90acd0-6627-4c1a-b809-7157522cbd80)
-  <img width="360" alt="start" src="https://github.com/000kev/anxend-challenge/assets/26770945/c6106bec-4df1-486b-a076-4d125b5c9228">
+<br/>
+<span> 
+  <img width="360" alt="db" src="https://github.com/000kev/anxend-challenge/assets/26770945/c4a73451-8079-4331-88e3-d77cf9961042">
+  <img width="360" alt="start" src="https://github.com/000kev/anxend-challenge/assets/26770945/6dfeaaa1-e220-4273-9367-643c138e6bdd">
 </span>
-
 
 
