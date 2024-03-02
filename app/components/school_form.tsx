@@ -3,9 +3,24 @@ import { Form, useNavigation } from "@remix-run/react";
 export default function SchoolForm(props) {
     const navigation = useNavigation();
 
+    const clearFields = () => {
+        navigation?.formData.set("name", "");
+        navigation?.formData.set("email", "");
+        navigation?.formData.set("name", "");
+        navigation?.formData.set("juniorSenior", "");
+        navigation?.formData.set("country", "");
+        navigation?.formData.set("addressCode", "");
+        navigation?.formData.set("townCity", "");
+        navigation?.formData.set("region", "");
+        navigation?.formData.set("street1", "");
+        navigation?.formData.set("street2", "");
+        navigation?.formData.set("nameNumber", "");
+
+    }
+
     return (
         <section className={props.className} >
-            <Form className="flex flex-col" method="post" action="/home">
+            <Form onSubmit={ clearFields } className="flex flex-col" method="post" action="/home">
                 <h1 className="font-montserrat text-4xl text-white drop-shadow-xl">Add School</h1>
                 <label className="mt-5 font-montserrat text-base text-white">
                     School:

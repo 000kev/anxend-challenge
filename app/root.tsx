@@ -1,7 +1,6 @@
 import { LinksFunction } from "@remix-run/node"
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,

@@ -1,4 +1,5 @@
 import { Form } from "@remix-run/react";
+import DBAlert from "./alert";
 
 export default function DisplaySchools(props) {
     const loader_data = props.loaderData;
@@ -27,9 +28,13 @@ export default function DisplaySchools(props) {
                     <button className="mt-8 ml-8 inline-block rounded-full bg-anxpurple-700 px-8 py-1.5 font-montserrat text-white hover:bg-anxwhite-300 hover:text-anxgreen-300 hover:shadow-xl" type="submit">Filter</button>
                 </span>
             </Form>
-            {loader_data.result2.map(school => (
-                <div className="mt-2 font-montserrat text-base text-white " key={school.id}>{school.name}</div>
-            ))}
+            {
+            loader_data.result2.length === 0 
+            ? <DBAlert/>
+            : loader_data.result2.map(school => (
+                <div className="mt-5 font-montserrat text-base text-white " key={school.id}>{school.name}</div>
+            ))
+            }
         </section>
     );
 }

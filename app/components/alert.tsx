@@ -2,8 +2,8 @@ import { Alert } from 'flowbite-react';
 
 export default function DBAlert() {
   return (
-    <Alert color="failure" rounded>
-      <span className="font-medium">Hmm...</span> Your entry was invalid and was not pushed to the database.
+    <Alert className="mt-5 w-48" color="warning" rounded>
+      <span className="font-medium ">Please select a filter</span>
     </Alert>
   );
 }
