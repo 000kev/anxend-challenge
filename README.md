@@ -18,8 +18,8 @@ the manual router configurations working but it seems I need more time to get it
 
 Here we have an example of a database populated with some data using the app and the app itself
 <span>
-  <img width="360 alt="start-db" src="https://github.com/000kev/anxend-challenge/assets/26770945/8df41649-6456-4ce9-be52-72f0642e4b93">
-  <img width="1440" alt="start" src="https://github.com/000kev/anxend-challenge/assets/26770945/c6106bec-4df1-486b-a076-4d125b5c9228">
+  ![db1](https://github.com/000kev/anxend-challenge/assets/26770945/6e90acd0-6627-4c1a-b809-7157522cbd80)
+  <img width="360" alt="start" src="https://github.com/000kev/anxend-challenge/assets/26770945/c6106bec-4df1-486b-a076-4d125b5c9228">
 </span>
 
 
