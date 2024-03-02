@@ -16,6 +16,8 @@ the manual router configurations working but it seems I need more time to get it
 
 ### Examples
 
+
+
 Here we have a database populated with some data using the app and the app itself. In the database we have 3 entries in London city, so if you pick London as a filter, the
 3 schools in that City will be displayed on the right hand side. This use case demonstrates how the filter option works and that it uses the entries from the database
 to populate the dropdown. Test it out!
