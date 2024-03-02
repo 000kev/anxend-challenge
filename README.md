@@ -1,14 +1,25 @@
 ## Anxend Project 1 Submission
 
-### Project 1:
+### Project 1 Usage:
 
-Create a page with a form to add a school and it's address to the database.
-With that form created add a handful of schools and then display (on the same page or a new one) a list of schools filtered for your home town (CapeTown, London etc..).
-No visual or styling needed for this task.
+The purpose of this project was to create a page with a form that can add a school and its address to the database and to be able to filter the list of schools based
+on a specified home town or city. For this project, I used remix, edgedb and react while following best practices to the best of my knowledge while learning the framework.
+Visual sytling for this project was not needed, however I did add some basic visual elements using tailwindcss and tailwind flowbite for better UX and flow.
 
-### Solution
+The project has only been configured to work in local developments (because EdgeDB Cloud's free tier isnt available yet :/ ) which requires to create an edgedb instance
+on your local machine and connect it to the project using <code>edgedb project init</code>. Make sure to install depencies <code>npm ci</code> and migrate the database 
+<code>edgedb migrate</code>. Once all of the admin is out of the way, you can test out this bad boy on your local machine using this command <code>npm run dev</code>.
+
+One thing to note when using the application: once the application is running, if you go to localhost:xxxx, you will land on a blank purple page. I did try to get
+the manual router configurations working but it seems I need more time to get it right. So for *my* convenience, please go to the browser url and type in anything like this:
+<code>localhost:xxxx/home</code>. It doesn't have to be home, it can be anything at all! Then you're good to go!
+
+### Examples
+
 
 <span>
-<img width="360" alt="db-addresses" src="https://github.com/000kev/anxend-challenge/assets/26770945/cf931f97-b07f-42ad-858c-9c9433626523">
-<img width="360" alt="db-schools" src="https://github.com/000kev/anxend-challenge/assets/26770945/ac397a3c-6070-49f0-bb03-6a55f9216029">
+
 </span>
+<img width="1440" alt="start" src="https://github.com/000kev/anxend-challenge/assets/26770945/c6106bec-4df1-486b-a076-4d125b5c9228">
+
+![start-db](https://github.com/000kev/anxend-challenge/assets/26770945/8df41649-6456-4ce9-be52-72f0642e4b93)
